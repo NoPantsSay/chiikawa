@@ -12,7 +12,7 @@ impl Plugin for FreeCameraPlugin {
 fn spawn_camera(mut commands: Commands) {
     commands.spawn((
         Camera3d::default(),
-        Transform::from_xyz(5.0, 5.0, 10.0).looking_at(Vec3::ZERO, Vec3::Y),
+        Transform::from_xyz(5.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
         // Free camera controller settings
         free_camera::FreeCamera {
             sensitivity: 0.2,

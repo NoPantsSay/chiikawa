@@ -1,7 +1,7 @@
-use bevy::color::palettes::css::{BLACK, BLUE, LIGHT_YELLOW};
+use bevy::color::palettes::css::{BLUE, LIGHT_YELLOW, WHITE};
 use bevy::dev_tools::fps_overlay::{FpsOverlayConfig, FpsOverlayPlugin, FrameTimeGraphConfig};
-use bevy::pbr::ExtendedMaterial;
 use bevy::prelude::*;
+use bevy_mod_outline::*;
 use bevy_wind_waker_shader::prelude::*;
 use chiikawa::cameras::free_camera::FreeCameraPlugin;
 
@@ -18,6 +18,7 @@ fn main() {
             },
         })
         .add_plugins(WindWakerShaderPlugin::default())
+        .add_plugins(OutlinePlugin)
         .add_plugins(FreeCameraPlugin)
         .add_systems(Startup, setup)
         .run();
@@ -26,36 +27,33 @@ fn main() {
 fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut extended_materials: ResMut<Assets<ExtendedMaterial<StandardMaterial, WindWakerShader>>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     commands.spawn((
         Mesh3d(meshes.add(Sphere::new(1.0).mesh().uv(32, 18))),
         Transform::from_xyz(0.0, 1.0, 0.0),
-        MeshMaterial3d(
-            extended_materials.add(ExtendedMaterial::<StandardMaterial, WindWakerShader> {
-                base: StandardMaterial {
-                    base_color: Color::from(BLUE), // 基础材质属性
-                    ..default()
-                },
-                extension: WindWakerShaderBuilder::default()
-                    .override_rim_color(Color::from(BLACK))
-                    .build(),
-            }),
-        ),
+        MeshMaterial3d(materials.add(StandardMaterial {
+            base_color: Color::from(BLUE), // 基础材质属性
+            ..default()
+        })),
+        WindWakerShaderBuilder::default()
+            .override_highlight_color(WHITE.into())
+            .override_shadow_color(WHITE.into())
+            .build(),
+        OutlineVolume {
+            visible: true,
+            colour: Color::srgb(0.0, 0.0, 0.0),
+            width: 5.0,
+        },
     ));
 
     commands.spawn((
         Mesh3d(meshes.add(Plane3d::default().mesh().size(10.0, 10.0))),
-        MeshMaterial3d(extended_materials.add(ExtendedMaterial::<
-            StandardMaterial,
-            WindWakerShader,
-        > {
-            base: StandardMaterial {
-                base_color: Color::from(LIGHT_YELLOW), // 基础材质属性
-                ..default()
-            },
-            extension: WindWakerShaderBuilder::default().build(),
+        MeshMaterial3d(materials.add(StandardMaterial {
+            base_color: Color::from(LIGHT_YELLOW), // 基础材质属性
+            ..default()
         })),
+        WindWakerShaderBuilder::default().build(),
     ));
 
     commands.spawn((
@@ -63,6 +61,6 @@ fn setup(
             shadows_enabled: true,
             ..default()
         },
-        Transform::from_translation(Vec3::new(1.0, 1.0, 0.0)).looking_at(Vec3::ZERO, Vec3::Y),
+        Transform::from_translation(Vec3::new(0.0, 1.0, 0.0)).looking_at(Vec3::ZERO, Vec3::Y),
     ));
 }

@@ -19,7 +19,7 @@ opt-level = 3
 bevy = { version = "0.18",  features = ["free_camera", "bevy_dev_tools"]}
 bevy_mod_outline = "0.12.0"
 bevy_wind_waker_shader = "0.6.0"
-rand = "0.10.1"
+fast_poisson = "1.0.2"
 
 # These lints may be important signals about code quality, but normal Bevy code
 # commonly triggers them and the CI workflow treats them as errors, so we've
